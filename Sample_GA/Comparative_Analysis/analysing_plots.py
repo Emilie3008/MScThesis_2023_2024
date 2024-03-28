@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 simple_time = np.zeros((100,))
 simple_iterations = np.zeros(100,)
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Simple", "Simple_GA_nostor.txt"), 'r') as file :
+with open(os.path.join(os.getcwd(), "Simple", "Simple_GA.txt"), 'r') as file :
     for i in range(100):
         line = file.readline()
         generation, time, _ = line.split(", ")
@@ -21,7 +21,7 @@ print("\n")
 
 generations_simple_max = np.zeros((int(simple_iterations[s_index_max]),))
 fitness_simple_max = np.zeros((int(simple_iterations[s_index_max]),))
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Simple", "simple_{}.txt".format(s_index_max)), 'r') as file :
+with open(os.path.join(os.getcwd(), "Simple", "simple_{}.txt".format(s_index_max)), 'r') as file :
     for i in range(int(simple_iterations[s_index_max])):
         line = file.readline()
         gen, best_fitness = line.split(", ")
@@ -31,7 +31,7 @@ with open(os.path.join("/home", "emilie", "GA_RESULTS", "Simple", "simple_{}.txt
 
 generations_simple_min = np.zeros((int(simple_iterations[s_index_min]),))
 fitness_simple_min = np.zeros((int(simple_iterations[s_index_min]),))
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Simple", "simple_{}.txt".format(s_index_min)), 'r') as file :
+with open(os.path.join(os.getcwd(), "Simple", "simple_{}.txt".format(s_index_min)), 'r') as file :
     for i in range(int(simple_iterations[s_index_min])):
         line = file.readline()
         gen, best_fitness = line.split(", ")
@@ -41,7 +41,7 @@ with open(os.path.join("/home", "emilie", "GA_RESULTS", "Simple", "simple_{}.txt
 
 adaptive_time = np.zeros((100,))
 adaptive_iterations = np.zeros(100,)
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Adaptive", "Adaptive_GA_nostor.txt"), 'r') as file :
+with open(os.path.join(os.getcwd(), "Adaptive", "Adaptive_GA.txt"), 'r') as file :
     for i in range(100):
         line = file.readline()
         generation, time, _ = line.split(", ")
@@ -59,7 +59,7 @@ print("\n")
 
 generations_adaptive_max = np.zeros((int(adaptive_iterations[a_index_max]),))
 fitness_adaptive_max = np.zeros((int(adaptive_iterations[a_index_max]),))
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Adaptive", "adaptive_{}.txt".format(a_index_max)), 'r') as file :
+with open(os.path.join(os.getcwd(), "Adaptive", "adaptive_{}.txt".format(a_index_max)), 'r') as file :
     for i in range(int(adaptive_iterations[a_index_max])):
         line = file.readline()
         gen, best_fitness = line.split(", ")
@@ -69,7 +69,7 @@ with open(os.path.join("/home", "emilie", "GA_RESULTS", "Adaptive", "adaptive_{}
 
 generations_adaptive_min = np.zeros((int(adaptive_iterations[a_index_min]),))
 fitness_adaptive_min = np.zeros((int(adaptive_iterations[a_index_min]),))
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Adaptive", "adaptive_{}.txt".format(a_index_min)), 'r') as file :
+with open(os.path.join(os.getcwd(), "Adaptive", "adaptive_{}.txt".format(a_index_min)), 'r') as file :
     for i in range(int(adaptive_iterations[a_index_min])):
         line = file.readline()
         gen, best_fitness = line.split(", ")
@@ -80,7 +80,7 @@ with open(os.path.join("/home", "emilie", "GA_RESULTS", "Adaptive", "adaptive_{}
 
 tournament_time = np.zeros((100,))
 tournament_iterations = np.zeros(100,)
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Tournaments", "Tournament_GA_nostor.txt"), 'r') as file :
+with open(os.path.join(os.getcwd(), "Tournaments", "Tournament_GA.txt"), 'r') as file :
     for i in range(100):
         line = file.readline()
         generation, time, _ = line.split(", ")
@@ -98,7 +98,7 @@ print("\n")
 
 generations_tournament_max = np.zeros((int(tournament_iterations[t_index_max]),))
 fitness_tournament_max = np.zeros((int(tournament_iterations[t_index_max]),))
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Tournaments", "tournaments_{}.txt".format(t_index_max)), 'r') as file :
+with open(os.path.join(os.getcwd(), "Tournaments", "tournaments_{}.txt".format(t_index_max)), 'r') as file :
     for i in range(int(tournament_iterations[t_index_max])):
         line = file.readline()
         gen, best_fitness = line.split(", ")
@@ -108,7 +108,7 @@ with open(os.path.join("/home", "emilie", "GA_RESULTS", "Tournaments", "tourname
 
 generations_tournament_min = np.zeros((int(tournament_iterations[t_index_min]),))
 fitness_tournament_min = np.zeros((int(tournament_iterations[t_index_min]),))
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Tournaments", "tournaments_{}.txt".format(t_index_min)), 'r') as file :
+with open(os.path.join(os.getcwd(), "Tournaments", "tournaments_{}.txt".format(t_index_min)), 'r') as file :
     for i in range(int(tournament_iterations[t_index_min])):
         line = file.readline()
         gen, best_fitness = line.split(", ")
@@ -118,7 +118,7 @@ with open(os.path.join("/home", "emilie", "GA_RESULTS", "Tournaments", "tourname
 
 multi_time = np.zeros((100,))
 multi_iterations = np.zeros(100,)
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Multi", "Multi_GA_nostor.txt"), 'r') as file :
+with open(os.path.join(os.getcwd(), "Multi", "Multi_GA.txt"), 'r') as file :
     for i in range(100):
         line = file.readline()
         generation, time, _ = line.split(", ")
@@ -136,7 +136,7 @@ print("\n")
 
 generations_multi_max = np.zeros((int(multi_iterations[m_index_max]),))
 fitness_multi_max = np.zeros((int(multi_iterations[m_index_max]),))
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Multi", "multi_{}.txt".format(m_index_max)), 'r') as file :
+with open(os.path.join(os.getcwd(), "Multi", "multi_{}.txt".format(m_index_max)), 'r') as file :
     for i in range(int(multi_iterations[m_index_max])):
         line = file.readline()
         gen, best_fitness = line.split(", ")
@@ -146,7 +146,7 @@ with open(os.path.join("/home", "emilie", "GA_RESULTS", "Multi", "multi_{}.txt".
 
 generations_multi_min = np.zeros((int(multi_iterations[m_index_min]),))
 fitness_multi_min = np.zeros((int(multi_iterations[m_index_min]),))
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Multi", "multi_{}.txt".format(m_index_min)), 'r') as file :
+with open(os.path.join(os.getcwd(), "Multi", "multi_{}.txt".format(m_index_min)), 'r') as file :
     for i in range(int(multi_iterations[m_index_min])):
         line = file.readline()
         gen, best_fitness = line.split(", ")
@@ -156,7 +156,7 @@ with open(os.path.join("/home", "emilie", "GA_RESULTS", "Multi", "multi_{}.txt".
 
 combined_time = np.zeros((100,))
 combined_iterations = np.zeros(100,)
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Combined", "Combined_GA_nostor.txt"), 'r') as file :
+with open(os.path.join(os.getcwd(), "Combined", "Combined_GA.txt"), 'r') as file :
     for i in range(100):
         line = file.readline()
         generation, time, _ = line.split(", ")
@@ -173,7 +173,7 @@ print("Maximum ", c_index_max, combined_iterations[c_index_max])
 
 generations_combined_max = np.zeros((int(combined_iterations[c_index_max]),))
 fitness_combined_max = np.zeros((int(combined_iterations[c_index_max]),))
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Combined", "combined_{}.txt".format(c_index_max)), 'r') as file :
+with open(os.path.join(os.getcwd(), "Combined", "combined_{}.txt".format(c_index_max)), 'r') as file :
     for i in range(int(combined_iterations[c_index_max])):
         line = file.readline()
         gen, best_fitness = line.split(", ")
@@ -183,7 +183,7 @@ with open(os.path.join("/home", "emilie", "GA_RESULTS", "Combined", "combined_{}
 
 generations_combined_min = np.zeros((int(combined_iterations[c_index_min]),))
 fitness_combined_min = np.zeros((int(combined_iterations[c_index_min]),))
-with open(os.path.join("/home", "emilie", "GA_RESULTS", "Combined", "combined_{}.txt".format(c_index_min)), 'r') as file :
+with open(os.path.join(os.getcwd(), "Combined", "combined_{}.txt".format(c_index_min)), 'r') as file :
     for i in range(int(combined_iterations[c_index_min])):
         line = file.readline()
         gen, best_fitness = line.split(", ")
