@@ -236,35 +236,35 @@ for i in range(N_problem):
         t_start = time.time()
         generation, fitness = simple_GA.run_genetic_algorithm(seed=i*10 + j)  
         delta_t = time.time() - t_start
-        with open(os.path.join(os.getcwd(), "GA_RESULTS", "Simple", "Simple_GA.txt"), "a") as file:
+        with open(os.path.join(os.getcwd(), "Comparative_Analysis", "Simple", "Simple_GA.txt"), "a") as file:
             file.write(f"{generation}, {delta_t}, {fitness} \n")
 
         tournament_GA = GeneticAlgorithm(target, adaptive=False, multi_parent=None)
         t_start = time.time()
         generation, fitness = tournament_GA.run_genetic_algorithm(seed=i*10 + j)  
         delta_t = time.time() - t_start
-        with open(os.path.join(os.getcwd(), "GA_RESULTS", "Tournaments", "Tournament_GA.txt"), "a") as file:
+        with open(os.path.join(os.getcwd(), "Comparative_Analysis", "Tournaments", "Tournament_GA.txt"), "a") as file:
             file.write(f"{generation}, {delta_t}, {fitness} \n")
 
         adaptive_GA = GeneticAlgorithm(target, no_tournament=True, multi_parent=None)
         t_start = time.time()
         generation, fitness = adaptive_GA.run_genetic_algorithm(seed=i*10 + j)  
         delta_t = time.time() - t_start
-        with open(os.path.join(os.getcwd(), "GA_RESULTS", "Adaptive", "Adaptive_GA.txt"), "a") as file:
+        with open(os.path.join(os.getcwd(), "Comparative_Analysis", "Adaptive", "Adaptive_GA.txt"), "a") as file:
             file.write(f"{generation}, {delta_t}, {fitness} \n")
 
         multi_GA = GeneticAlgorithm(target, no_tournament=True, adaptive=False)
         t_start = time.time()
         generation, fitness = multi_GA.run_genetic_algorithm(seed=i*10 + j)  
         delta_t = time.time() - t_start
-        with open(os.path.join(os.getcwd(), "GA_RESULTS", "Multi", "Multi_GA.txt"), "a") as file:
+        with open(os.path.join(os.getcwd(), "Comparative_Analysis", "Multi", "Multi_GA.txt"), "a") as file:
             file.write(f"{generation}, {delta_t}, {fitness} \n")
 
         combined_GA = GeneticAlgorithm(target)
         t_start = time.time()
         generation, fitness = combined_GA.run_genetic_algorithm(seed=i*10 + j)  
         delta_t = time.time() - t_start
-        with open(os.path.join(os.getcwd(), "GA_RESULTS", "Combined", "Combined_GA.txt"), "a") as file:
+        with open(os.path.join(os.getcwd(), "Comparative_Analysis", "Combined", "Combined_GA.txt"), "a") as file:
             file.write(f"{generation}, {delta_t}, {fitness} \n")
 
         print("---------- {} % \n".format(i*20 + j + 1))
