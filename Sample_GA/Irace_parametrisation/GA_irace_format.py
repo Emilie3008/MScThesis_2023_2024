@@ -314,4 +314,6 @@ class GeneticAlgorithm():
                 self.update_mean_fitness(population)
                 # Update of the mutation rate
                 self.mutation_rate = 2*(1/(1+np.exp(-(generation-self.best_generation))) - 0.5)*self.pm
+
+        # The cost we want to minimise here is the number of generations needed to converge 
         return dict(cost=generation)
