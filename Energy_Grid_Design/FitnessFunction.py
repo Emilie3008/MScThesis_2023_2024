@@ -48,7 +48,7 @@ for sensitivity, error in sensitivities:
 
 
 # Extracting the eigen basis (Fission XS perturbation)
-eigen_basis = np.zeros((82, 1500))
+ei = np.zeros((82, 1500))
 for label, index in perts.items():
     if index == 0:
         continue
@@ -61,7 +61,7 @@ for label, index in perts.items():
         for line in lines[2:]:
             energy, basis_coeff = line.split(" ")
             basis_coeff, _ = basis_coeff.split("\n")
-            eigen_basis[index - 1][i] = float(basis_coeff)
+            ei[index - 1][i] = float(basis_coeff)
             i += 1
             
 # Extracting GPT sensitivities
@@ -91,7 +91,7 @@ for sensitivities, label in [(fission_sensitivities, "MT18"),
         i += 1
 
 # Filling the diagonal of the singular matrix
-singular_value_matrix = {"MT2": [], "MT18":[], "MT102": []}
+singular_matrix_Pu = {"MT2": [], "MT18":[], "MT102": []}
 i = 0
 for label, index in perts.items():
     if index > 0:
@@ -106,10 +106,10 @@ for label, index in perts.items():
         with open(file_name, 'r') as file:
             lines = file.readlines()
             sv, _ = lines[ int(number) - 1 ].split("\n")
-            singular_value_matrix[label].append(float(sv))
+            singular_matrix_Pu[label].append(float(sv))
         i += 1
 
-covariance_matrix = {"MT2": np.zeros((200, 200)), "MT18": np.zeros((200, 200)), "MT102": np.zeros((200, 200))}
+covariance_matrix_Pu = {"MT2": np.zeros((200, 200)), "MT18": np.zeros((200, 200)), "MT102": np.zeros((200, 200))}
 
 # -------------------------------------- UTILS ---------------------------------------
 
@@ -187,8 +187,8 @@ def extend(fine_energy_grid, coarse_energy_grid, down_binned_vector):
     return up_binned_vector
 
 # Projection onto the eigen basis 
-def projection(dict_vector, eigen_basis, labels=perts, energy_grid = fine_energy_grid):
-    projected_vector = np.zeros((len(eigen_basis),))
+def projection(dict_vector, ei, labels=perts, energy_grid = fine_energy_grid):
+    projected_vector = np.zeros((len(ei),))
     delta_E = np.diff(energy_grid)
     for label, index in labels.items():
         if index == 0:
@@ -196,7 +196,7 @@ def projection(dict_vector, eigen_basis, labels=perts, energy_grid = fine_energy
         _, label, _ = label.split("_")
         vector = dict_vector[label]
         
-        projected_vector[index-1] = trapz(np.array(vector)*np.array(eigen_basis[index-1]), energy_grid[:-1])
+        projected_vector[index-1] = trapz(np.array(vector)*np.array(ei[index-1]), energy_grid[:-1])
 
     return projected_vector
 
@@ -222,7 +222,7 @@ def get_GPT_on_eigenbasis(GA_grid):
     GPT_GA = down_binning(GPT_vector, GA_grid, coarse_energy_grid)
     GA_energy_grid = energy_from_energy_grid(coarse_energy_grid, GA_grid)
     extended_GPT_GA = up_binning(fine_energy_grid, GA_energy_grid, GPT_GA)
-    projected_GPT = projection(extended_GPT_GA, eigen_basis)
+    projected_GPT = projection(extended_GPT_GA, ei)
     return projected_GPT
 
 
@@ -240,8 +240,8 @@ def compute_uncertainty_GPT(GA_grid):
 
     for label in extended_GPT_GA.keys():
 
-        uncertainty_evaluated_GPT[i] = extended_GPT_GA[label].T @ covariance_matrix[label] @ extended_GPT_GA[label]
-        uncertainty_GPT[i] = GPT_vector[label].T @ covariance_matrix[label] @ GPT_vector[label]
+        uncertainty_evaluated_GPT[i] = extended_GPT_GA[label].T @ covariance_matrix_Pu[label] @ extended_GPT_GA[label]
+        uncertainty_GPT[i] = GPT_vector[label].T @ covariance_matrix_Pu[label] @ GPT_vector[label]
 
     return np.linalg.norm(uncertainty_evaluated_GPT - uncertainty_GPT)
 
