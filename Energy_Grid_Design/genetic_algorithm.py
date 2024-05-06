@@ -1,10 +1,17 @@
 import numpy as np
 import random
-from fitness_function import compare_vectors_GPT, compare_uncertainty_GPT_xGPT, compare_vectors_GPT_xGPT 
+from fitness_function import compare_vectors_GPT, compare_uncertainty_GPT_xGPT, compare_vectors_GPT_xGPT, compare_correlation
 
 ALLELE_POOL = range(1, 200)
 
 FITNESS_LIBRARY = dict()
+FITNESS_FUNCTION = None
+
+def detect_consecutive_cuts(chromosome):
+    for i in range(len(chromosome) - 1):
+        if chromosome[i] + 1 == chromosome[i + 1] or chromosome[i] + 2 == chromosome[i + 1]:
+            return True
+    return False
 
 class GeneticAlgorithm():
 
@@ -24,7 +31,12 @@ class GeneticAlgorithm():
               Else, the fitness is computed and then stored in FITNESS_LIBRARY
             """
             if tuple(self.get_chromosome()) not in FITNESS_LIBRARY:
-                FITNESS_LIBRARY[tuple(self.get_chromosome())] = compare_vectors_GPT_xGPT(self.get_chromosome())
+
+                fitness = FITNESS_FUNCTION(self.get_chromosome())
+
+                # fitness = 10*fitness if detect_consecutive_cuts(self.get_chromosome()) else fitness
+                FITNESS_LIBRARY[tuple(self.get_chromosome())] = fitness
+
             return FITNESS_LIBRARY[tuple(self.get_chromosome())]
         
         def get_chromosome(self):
@@ -33,9 +45,14 @@ class GeneticAlgorithm():
             """
             return sorted(self.chromosome)
         
-    def __init__(self, nGroups, pop_size = 450, pm = 0.045, pc = 1, no_tournament = False,
+    def __init__(self, nGroups, criteria = "GPT", pop_size = 450,
+                  pm = 0.045, pc = 1, no_tournament = False,
                   elitism = 0.027, adaptive = True, soft_mutation = 1, 
-                  p = 0.35, NT = 10, multi_parent = 10):
+                  p = 0.35, NT = 10, multi_parent = None):
+        
+        global FITNESS_FUNCTION
+        
+        FITNESS_FUNCTION = compare_vectors_GPT if criteria == "GPT" else compare_vectors_GPT_xGPT if criteria == "XGPT" else compare_uncertainty_GPT_xGPT if criteria == "uncertainty" else compare_correlation
         
         # Classical Genetic algorithm parametrisation
         self.nGroups = nGroups - 1
@@ -59,7 +76,7 @@ class GeneticAlgorithm():
         self.mean_fitness = -1
 
         # Multi-parent reproduction parametrisation
-        self.multi_parent = None
+        self.multi_parent = multi_parent
 
     def new_individual(self):
         """
@@ -67,6 +84,7 @@ class GeneticAlgorithm():
         """
         chromosome = [random.choice(self.allele_pool) for
                        _ in range(self.nGroups)]
+        
         return self.Individual(self.repair(chromosome))
     
     def repair(self, chromosome):
@@ -84,7 +102,8 @@ class GeneticAlgorithm():
                 registered.append(chromosome[i])
             else:
                 # If the allele has already been registered, then
-                # it is replaced by a random allele which is not already present in the chromosome
+                # it is replaced by a random allele which is not
+                # already present in the chromosome
                 chromosome[i] = self.mutated_allele(exclude = 
                                                     chromosome)
         
@@ -203,6 +222,7 @@ class GeneticAlgorithm():
 
             # Rank-based selection
             probability += 2*j/(n*(n-1))
+
             if probability >= p:
                 return parent_list[j-1].chromosome[index]
             
@@ -232,18 +252,21 @@ class GeneticAlgorithm():
         """
         fitness = 0
         for indiv in population:
-            fitness+= indiv.fitness
+            fitness += indiv.fitness
         self.mean_fitness = fitness/len(population)
     
     def run_genetic_algorithm(self, seed, max_iter = 500, tol = 0.0, display = True):
+
         # Emptying the fitness library from previous runs
+        global FITNESS_LIBRARY
+
         FITNESS_LIBRARY = dict()
 
         random.seed(seed)
         population = []
         generation = 0
 
-        # 0. Random generation of the initial population
+        # Random generation of the initial population
         for _ in range(self.pop_size):
             population.append(self.new_individual())
 
@@ -264,6 +287,8 @@ class GeneticAlgorithm():
             # Creation of the mating pool
             mating_pool = self.tournament(population) if not self.no_tournament else population[:self.pop_size//2]
 
+
+            # Continuing the breeding process while the population is not renewed
             while len(new_population) < self.pop_size:
 
                 if self.multi_parent is not None:
@@ -278,6 +303,7 @@ class GeneticAlgorithm():
                     parent2 = random.choice(mating_pool)
                     for offspring in self.create_offspring(parent1, parent2):
                         new_population.append(offspring)
+
             population = new_population
             generation += 1
             population = sorted(population, key=lambda x:x.fitness) 
@@ -288,6 +314,7 @@ class GeneticAlgorithm():
                 
                 # Udpate of the mean fitness
                 self.update_mean_fitness(population)
+
                 # Update of the mutation rate
                 self.mutation_rate = 2*(1/(1+np.exp(-(generation-self.best_generation))) - 0.5)*self.pm
 
