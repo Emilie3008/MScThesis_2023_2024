@@ -1,107 +1,190 @@
 import numpy as np
-from data_extraction import XGPT_energy_grid, GPT_energy_grid, GPT_vector, xGPT_vector, perts, eigenbasis, singular_matrix 
+from extract_input_data import xgpt_energy_grid, gpt_energy_grid, gpt_vector, perts, eigenbasis
 
 
-def down_binning(GPT_sensitivities, GA_energy_grid, GPT_energy_grid):
+def down_binning(gpt_sensitivities, ga_grid, gpt_energy_grid):
+    """
+    :param gpt_sensitivities: A dictionnary, whose keys
+                are "MT2", MT18" and "MT102". The associated values 
+                are the fine GPT-scored sensitivity vectors.
+    :param ga_energy_grid: The chromosome encoding the test discretisation
+    :param gpt_energy_grid: The 226G energy grid on which the fine
+                    GPT-scored sensitivity vectors are evaluated
+    :return: A dictionnary, whose keys
+            are "MT2", MT18" and "MT102". The associated values 
+            are the evaluated GPT-scored sensitivity vectors
+            whose size is the one defined by the coarse discretisation
+
+    Evaluate the GPT-scored sensitivity vector for each perturbed cross-section
+    on the ga_grid
+    """
+
     downbinned = {}
-    for label, sensitivities in GPT_sensitivities.items():
-        downbinned[label] = evaluate_on_GA(sensitivities, GA_energy_grid, GPT_energy_grid)
+    # Iterating over each reaction
+    for reaction, sensitivities in gpt_sensitivities.items():
+        downbinned[reaction] = evaluate_on_ga(sensitivities, ga_grid, gpt_energy_grid)
     return downbinned
 
-def evaluate_on_GA(GPT_sensitivities, GA_energy_grid, GPT_energy_grid):
-    sensitivities_evaluated = np.zeros((len(GA_energy_grid) + 1,))
+def evaluate_on_ga(gpt_sensitivity, ga_grid, gpt_energy_grid):
+    """
+    :param gpt_sensitivity: A numpy array containing the fine GPT-scored 
+                    sensitivity coefficients of one perturbed cross section.
+    :param ga_grid: The chromosome encoding the test discretisation
+    :param gpt_energy_grid: The 226G energy grid on which the fine
+                    GPT-scored sensitivity vectors are evaluated
+    :return: A numpy array containing the evaluated GPT-scored sensitivity coefficients
+            whose size is the one defined by the coarse discretisation
+
+    Evaluate gpt_sensitivity on the ga_grid discretisation
+    """
+
+
+    sensitivities_evaluated = np.zeros((len(ga_grid) + 1,))
+
+    # Defining the index for filling the coarse sensitivity vector
     j = 0
+
     energies = []
-    for i in range(len(GPT_sensitivities)):
 
-        cut = len(GPT_sensitivities) if j >= len(GA_energy_grid) else GA_energy_grid[j]
-        prev_cut = 0 if j == 0 else GA_energy_grid[j - 1]
+    # Iteration over each sensitivity coefficient
+    for i in range(len(gpt_sensitivity)):
 
+        # Defining the current cut. 
+        cut = len(gpt_sensitivity) if j >= len(ga_grid) else ga_grid[j]
+        prev_cut = 0 if j == 0 else ga_grid[j - 1]
+
+        # If the fine sensitivity coefficient is inside the coarse group 
+        # defined by [prev_cut, cut], use it to evaluate the coarse 
+        # sensitivity coefficient on that group
         if i >= prev_cut and i < cut:
-            sensitivities_evaluated[j] += GPT_sensitivities[i]*(GPT_energy_grid[i+1]-GPT_energy_grid[i])
-            energies.append(GPT_energy_grid[i+1] - GPT_energy_grid[i])
 
+            # Downbinning involves performing a weighted average, the weights being the energy intervals
+            sensitivities_evaluated[j] += gpt_sensitivity[i]*(gpt_energy_grid[i+1]-gpt_energy_grid[i])
+            energies.append(gpt_energy_grid[i+1] - gpt_energy_grid[i])
+
+        # If the fine sensitivity coefficient is not inside group [prev_cut, cut], 
+        # update prev_cut and cut.
         else :
             sensitivities_evaluated[j] /= np.sum(energies) 
-
             j += 1
             energies = []
-            cut = len(GPT_sensitivities) if j >= len(GA_energy_grid) else GA_energy_grid[j]
-            prev_cut = 0 if j == 0 else GA_energy_grid[j - 1]
-            sensitivities_evaluated[j] += GPT_sensitivities[i]*(GPT_energy_grid[i+1]-GPT_energy_grid[i])
+            cut = len(gpt_sensitivity) if j >= len(ga_grid) else ga_grid[j]
+            prev_cut = 0 if j == 0 else ga_grid[j - 1]
+            sensitivities_evaluated[j] += gpt_sensitivity[i]*(gpt_energy_grid[i+1]-gpt_energy_grid[i])
 
-            energies.append(GPT_energy_grid[i+1] - GPT_energy_grid[i])
+            energies.append(gpt_energy_grid[i+1] - gpt_energy_grid[i])
 
     sensitivities_evaluated[-1] /= np.sum(energies) 
     return sensitivities_evaluated
 
-# Extracting the energy discretisation defined by the GA grid
-def energy_from_energy_grid(energy_discretisation, GA_grid):
-    coarse_energy = np.zeros((len(GA_grid) + 2))
+
+def energy_from_energy_grid(energy_discretisation, ga_grid):
+    """
+    :param energy discretisation: The fine energy discretisation
+                        whose cuts fill the allele pool
+    :param ga_grid: The chromosome encoding the test discretisation
+    :return: A numpy array containing the ga_grid discretisation as energy values
+    Extract the energy discretisation defined by the GA grid
+    """
+    coarse_energy = np.zeros((len(ga_grid) + 2))
     coarse_energy[0] = energy_discretisation[0]
     i = 1
-    for cut in GA_grid:
+    for cut in ga_grid:
         coarse_energy[i] = energy_discretisation[cut]
         i += 1
     coarse_energy[-1] = energy_discretisation[-1]
 
     return coarse_energy
 
-# Upbinning to 1500G
-def up_binning(XGPT_energy_grid, GPT_energy_grid, down_binned_vector):
+def up_binning(fine_energy_grid, coarse_energy_grid, down_binned_vector):
+    """
+    :param fine_energy_grid: The energies of the fine discretisation
+    we aim at extending the downbinned vector
+    :param coarse_energy_grid: The energies of the coarse discretisation
+    on which the downbinned vector is evaluated
+    :param down_binned_vector: A dictionnary, whose keys
+            are "MT2", MT18" and "MT102". The associated values 
+            are the sensitivity vectors evaluated on the coarse energy grid
+    :return: A dictionnary, whose keys are  "MT2", MT18" and "MT102".
+      The associated values are the sensitivity vectors upbinned to the fine energy grid
+    """
     upbinned = {}
-    for label, sens in down_binned_vector.items():
-        upbinned[label] = extend(XGPT_energy_grid, GPT_energy_grid, sens)
+    for reaction, down_binned_sensitivity in down_binned_vector.items():
+        upbinned[reaction] = extend(fine_energy_grid, coarse_energy_grid, down_binned_sensitivity)
     return upbinned
 
-def extend(XGPT_energy_grid, GPT_energy_grid, down_binned_vector):
-    up_binned_vector = np.zeros( (len(XGPT_energy_grid) - 1, ) )
+def extend(fine_energy_grid, coarse_energy_grid, down_binned_sensitivity):
+    """
+    :param fine_energy_grid: The energies of the fine discretisation
+    we aim at extending the downbinned vector
+    :param coarse_energy_grid: The energies of the coarse discretisation
+    on which the downbinned vector is evaluated
+    :param down_binned_vector: An array containing the sensitivity coefficients
+                evaluated on the coarse energy grid
+    :return: A array of the sensitivity vector extended onto the fine energy grid
+    """
+    up_binned_vector = np.zeros( (len(fine_energy_grid) - 1, ) )
     j = 1
-    for i in range(1, len(XGPT_energy_grid)):
-        prev_energy = GPT_energy_grid[j - 1]
-        energy = GPT_energy_grid[j]
+    for i in range(1, len(fine_energy_grid)):
+        # Energy on the left side of the coarse group
+        prev_energy = coarse_energy_grid[j - 1]
+        # Energy on the right side of the coarse group
+        energy = coarse_energy_grid[j]
 
-        if XGPT_energy_grid[i] >= prev_energy and XGPT_energy_grid[i] <= energy:
-            up_binned_vector[i - 1] = down_binned_vector[j - 1]
-            if XGPT_energy_grid[i] == energy:
+        # If the fine sensitivity coefficients is inside the coarse group [prev_energy, energy],
+        # copy the coarse sensitivity coefficient as the fine sensitivity coefficient value
+        if fine_energy_grid[i] >= prev_energy and fine_energy_grid[i] <= energy:
+            up_binned_vector[i - 1] = down_binned_sensitivity[j - 1]
+
+            # If the fine energy matches the right side 
+            # of the coarse group, move on to the next group
+            if fine_energy_grid[i] == energy:
                 j += 1
-        else:
-            SL = down_binned_vector[j - 1]
-            SR = down_binned_vector[j]
-            DEL = (energy - XGPT_energy_grid[i - 1])
-            DER = (XGPT_energy_grid[i] - energy)
-            up_binned_vector[i-1] = (SL * DEL + SR * DER)/(DEL + DER)
-            j += 1
 
     return up_binned_vector
 
 # Projection onto the eigen basis 
-def projection(dict_vector, eigenbasis, labels, energy_grid = XGPT_energy_grid):
-    projected_vector = []
-    delta_E = np.diff(energy_grid)
-    for label, index in labels.items():
+def projection(dict_sensitivity, eigenbasis):
+    """
+    :param dict_sensitivity: A dictionnary, whose keys are "MT2", "MT18" and "MT102",
+      containing the evaluated and extended sensitivity profiles.
+    :param eigenbasis: A numpy matrix containing as its rows the eigenfunctions of the
+      POD of the covariance matrices of MT2, MT18 and MT102?
+
+    """
+    projected_sensitivity = []
+
+    # Projecting in the order defined by the perts dictionnary
+    for label, index in perts.items():
         if index == 0:
             continue
         _, label, _ = label.split("_")
-        vector = dict_vector[label]
-
-        projected_vector.append(np.sum(np.array(vector)*np.array(eigenbasis[index-1])))
+        sensitivity = dict_sensitivity[label]
+        projected_sensitivity.append(np.sum(np.array(sensitivity)*np.array(eigenbasis[index-1])))
         
-    return np.array(projected_vector)
+    return np.array(projected_sensitivity)
 
-def project_GPT_onto_eigenbasis(GA_grid):
-    GPT_GA = down_binning(GPT_vector, GA_grid, GPT_energy_grid)
-    GA_energy_grid = energy_from_energy_grid(GPT_energy_grid, GA_grid)
-    extended_GPT_GA = up_binning(XGPT_energy_grid, GA_energy_grid, GPT_GA)
-    projected_GPT = projection(extended_GPT_GA, eigenbasis, perts)
-    return projected_GPT
+def project_gpt_onto_eigenbasis(ga_grid):
+    """
+    :param ga_grid: The chromosome encoding the test discretisation
+    :return: A numpy vector containing the XGPT-scored sensitivity 
+        coefficients evaluated on ga_grid
+    """
+    coarse_gpt = down_binning(gpt_vector, ga_grid, gpt_energy_grid)
+    ga_energy_grid = energy_from_energy_grid(gpt_energy_grid, ga_grid)
+    extended_gpt_ga = up_binning(xgpt_energy_grid, ga_energy_grid, coarse_gpt)
+    projected_gpt = projection(extended_gpt_ga, eigenbasis)
+    return projected_gpt
 
-
-# Comparing xGPT et evaluated GPT
-def cosine_similarity(vector1, vector2):
-    dot_product = np.dot(vector1, vector2)
-    norm_vector1 = np.linalg.norm(vector1)
-    norm_vector2 = np.linalg.norm(vector2)
-    similarity = dot_product / (norm_vector1 * norm_vector2)
+def cosine_similarity(A, B):
+    """
+    :param A: A numpy vector
+    :param B: A numpy vector
+    :return: The cosine similarity of A and B
+    """
+    dot_product = np.dot(A, B)
+    norm_A = np.linalg.norm(A)
+    norm_B = np.linalg.norm(B)
+    similarity = dot_product / (norm_A * norm_B)
     return similarity
 
