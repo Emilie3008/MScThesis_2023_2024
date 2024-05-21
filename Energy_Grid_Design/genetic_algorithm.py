@@ -1,17 +1,11 @@
 import numpy as np
 import random
-from fitness_function import compare_vectors_GPT, compare_uncertainty_GPT_xGPT, compare_vectors_GPT_xGPT, compare_correlation
+from fitness_functions import compare_vectors_gpt, compare_variance_gpt_xgpt, compare_vectors_gpt_xgpt
 
-ALLELE_POOL = range(1, 200)
+ALLELE_POOL = range(1, 226)
 
 FITNESS_LIBRARY = dict()
 FITNESS_FUNCTION = None
-
-def detect_consecutive_cuts(chromosome):
-    for i in range(len(chromosome) - 1):
-        if chromosome[i] + 1 == chromosome[i + 1] or chromosome[i] + 2 == chromosome[i + 1]:
-            return True
-    return False
 
 class GeneticAlgorithm():
 
@@ -31,10 +25,7 @@ class GeneticAlgorithm():
               Else, the fitness is computed and then stored in FITNESS_LIBRARY
             """
             if tuple(self.get_chromosome()) not in FITNESS_LIBRARY:
-
                 fitness = FITNESS_FUNCTION(self.get_chromosome())
-
-                # fitness = 10*fitness if detect_consecutive_cuts(self.get_chromosome()) else fitness
                 FITNESS_LIBRARY[tuple(self.get_chromosome())] = fitness
 
             return FITNESS_LIBRARY[tuple(self.get_chromosome())]
@@ -45,14 +36,14 @@ class GeneticAlgorithm():
             """
             return sorted(self.chromosome)
         
-    def __init__(self, nGroups, criteria = "GPT", pop_size = 450,
-                  pm = 0.045, pc = 1, no_tournament = False,
+    def __init__(self, nGroups, criteria, pop_size = 500,
+                  pm = 0.035, pc = 1, no_tournament = False,
                   elitism = 0.027, adaptive = True, soft_mutation = 1, 
-                  p = 0.35, NT = 10, multi_parent = None):
+                  p = 0.55, NT = 1, multi_parent = 6):
         
         global FITNESS_FUNCTION
         
-        FITNESS_FUNCTION = compare_vectors_GPT if criteria == "GPT" else compare_vectors_GPT_xGPT if criteria == "XGPT" else compare_uncertainty_GPT_xGPT if criteria == "uncertainty" else compare_correlation
+        FITNESS_FUNCTION = compare_vectors_gpt if criteria == "GPT" else compare_vectors_gpt_xgpt if criteria == "XGPT" else compare_variance_gpt_xgpt
         
         # Classical Genetic algorithm parametrisation
         self.nGroups = nGroups - 1
@@ -212,7 +203,7 @@ class GeneticAlgorithm():
         """
         :param parent_list: A list of parents, instances of the Individual class, sorted inversely according to the fitness
         :param index: An integer, index of the gene which will be transmitted to the offspring
-        :return: 
+        :return: The allele that will be transmitted to the offsping in "index" 
         """
         p = random.random()
         probability = 0
@@ -255,7 +246,19 @@ class GeneticAlgorithm():
             fitness += indiv.fitness
         self.mean_fitness = fitness/len(population)
     
-    def run_genetic_algorithm(self, seed, max_iter = 500, tol = 0.0, display = True):
+    def run_genetic_algorithm(self, seed, max_iter = 100, tol = 0.0,
+                               max_stagnating_iter = 50, display = True):
+        """
+        :param seed: An integer to set the random seed
+        :param max_iter: An integer to set the maximal number of iterations
+        :param tol: The stopping criterion as a tolerance on the best fitness
+        :param max_stagnating_iter: Stopping criterion on the maximal number 
+                                    of stagnating iterations
+        :param display: A boolean. If True, a recap of the best performing 
+                        fitness is displayed at the end of each generation
+        
+        Run the genetic algorithm
+        """
 
         # Emptying the fitness library from previous runs
         global FITNESS_LIBRARY
@@ -273,9 +276,9 @@ class GeneticAlgorithm():
         # Fitness-based sorting of the Individuals
         population = sorted(population, key = lambda x:x.fitness)  
         
-        
+        stagnating_iter = 0
         while(generation < max_iter and 
-            population[0].fitness > tol):
+            population[0].fitness > tol and stagnating_iter < max_stagnating_iter):
         
             if display:
                 print("Best chromosome {} of fitness {}, generation {} \n".format(
@@ -291,13 +294,15 @@ class GeneticAlgorithm():
             # Continuing the breeding process while the population is not renewed
             while len(new_population) < self.pop_size:
 
+                # Multi-parent reproduction
                 if self.multi_parent is not None:
                     parent_list =list()
                     for _ in range(self.multi_parent):
                         parent_list.append(random.choice(mating_pool))
                     offspring = self.create_offspring_from_multiple_parents(parent_list)
                     new_population.append(offspring)
-
+                    
+                # Single-point crossover reproduction
                 else :
                     parent1 = random.choice(mating_pool)
                     parent2 = random.choice(mating_pool)
@@ -308,10 +313,14 @@ class GeneticAlgorithm():
             generation += 1
             population = sorted(population, key=lambda x:x.fitness) 
         
-            if self.adaptive : 
-                if population[0].fitness < self.best_fitness:
-                    self.best_fitness = population[0].fitness
-                
+            
+            if population[0].fitness < self.best_fitness:
+                self.best_fitness = population[0].fitness
+                stagnating_iter = 0
+            else:
+                stagnating_iter += 1
+
+            if self.adaptive :
                 # Udpate of the mean fitness
                 self.update_mean_fitness(population)
 
