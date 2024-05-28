@@ -2,9 +2,15 @@
 
 1. DESCRIPTION DU PROJET
 
-2. DESCRIPTION DU SAMPLE CASE
+   
+In this work, we explore the possibility of using genetic algorithms as a search method for the design of energy grids used in the framework of fast reactors sensitivity calculations.\\
+The main idea behind the three proposed fitness functions is to measure how good a sensitivity vector evaluated on a few-group discretisations is at accurately representing the same sensitivity vector, but scored on a many-group energy discretisations.\\
+On the one hand, the possibility of computing the many-groups sensitivities with Generalised Perturbation Theory (GPT), or with its recently updated version eXtended GPT (XGPT), is explored. On the other hand, we investigate the possibility of assessing the similarity between the many- and few-group scored sensitivity vectors through a cosine similarity or by comparing the variance on the response.\\
+ The resulting energy grids are optimised for the nuclear system ALFRED, on the sensitivities of $k_{eff}$ for $Pu^{239}$ and $U^{238}$, the nuclides contributing the most to the overall uncertainties. The energy grids are analysed qualitatively and quantitatively. The proposed approach results in energy grids that maximise the similarity with the fine sensitivity vectors but do not significantly impact the measure of the representativity. 
 
-3. DESCRIPTION DU ENERGY GRID DESIGN MODULE
+3. DESCRIPTION DU SAMPLE CASE
+
+4. DESCRIPTION DU ENERGY GRID DESIGN MODULE
    
 \begin{itemize}
     \item \textit{isotope.txt}: This text file should be filled with a single entry for the nuclide on which we wish to optimise the grids. If we want to optimise with respect to $Pu^{239}$, enter Pu239.  If we want to optimise for $U^{238}$, enter U238. 
