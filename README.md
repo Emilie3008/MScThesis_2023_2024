@@ -31,8 +31,8 @@ The following section briefly describes the different folders and python scripts
 
 - **ColorPalette** : I chose to associate to each eigenfunction a specific color in order to make the figures of Chapter 5 consistent. This folder contains textfiles with the RGB representation of the color of each eigenfunction.
 - **CovarianceMatrices**: This folder contains the covariance matrices of $Pu^{239}$ and  $U^{238}$, processed over each energy grids of the subfolder **Grids**. Those covariance matrices were used for the comparisons of the representativities of Chapter 5.
-- **GPT** folder: This folder contains the results for GPT-scored sensitivities of $U^{238}$ and $Pu^{239}$ from the simulation with Serpent 2.
-- **XGPT** folder: This folder contains two sub-folders, one with Pu239 data and the other with U238 data. Each sub-folder contains the results of the sensitivities
+- **GPT** folder: This folder contains the results for GPT-scored sensitivities of $U^{238}$ and $Pu^{239}$ from the simulation of the ALFRED core with Serpent 2.
+- **XGPT** folder: This folder contains two sub-folders, one with Pu239 data and the other with U238 data. Each sub-folder contains the results of the sensitivities of the ALFRED core.
 - **Results** : This folder contains the results of the tests carried out in Chapter 4 and 5. It has 3 subfolders:
   - **ConvergenceCurves**: this subfolder contains the results of the tests of convergence for the different configuration of parameters.
   - **Pu239**: This folder contains the energy grids optimised on the sensitivity profiles of  $Pu^{239}$
