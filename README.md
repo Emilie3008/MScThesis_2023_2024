@@ -41,6 +41,7 @@ This sample case was used in the early stages of the development of the project 
 - **extract_results.py**: Contains the function used to read and extract the best resulting energy grids.
 - **fitness_functions.py**: This Python file contains the 4 fitness functions that have been developed.
 - **fitness_utils.py**: This Python file contains all the functions performing the various sub-steps (evaluation on a coarse grid, extension, projection, etc.) of the fitness functions.
+- **irace_parametrisation.py**: This python script was used to run the iterative racing for the parametrisation of the final genetic algorithm.
 - **isotope.txt**: This text file should be filled with a single entry for the nuclide on which we wish to optimise the grids. If we want to optimise with respect to $Pu^{239}$, enter Pu239. If we want to optimise for $U^{238}$, enter U238.
 - **1500G.txt** and **226G.txt**: These text files give the exact energies of the XGPT and GPT fine discretisations. Each line corresponds to a new energy. For an N-group discretisation, N + 1 energies must be defined. Thus, **1500G.txt** contains 1501 lines and **226G.txt** contains 227 lines.
 scored by XGPT from the simulation with Serpent 2, as well as text files containing the eigenfunctions evaluated on the 1500G and the singular values
