@@ -27,6 +27,7 @@ This sample case was used in the early stages of the development of the project 
 - **Irace Parametrisation**: Contains the scripts used to configure the parametrisation of the GA for the sample case.
 
 ## Energy grid design
+The following section briefly describes the different folders and python scripts developped. Note that for confidentiality reasons, the resulst of the simulations of MYRRHA are not communicated.
 
 - **ColorPalette** : I chose to associate to each eigenfunction a specific color in order to make the figures of Chapter 5 consistent. This folder contains textfiles with the RGB representation of the color of each eigenfunction.
 - **CovarianceMatrices**: This folder contains the covariance matrices of $Pu^{239}$ and  $U^{238}$, processed over each energy grids of the subfolder **Grids**. Those covariance matrices were used for the comparisons of the representativities of Chapter 5.
