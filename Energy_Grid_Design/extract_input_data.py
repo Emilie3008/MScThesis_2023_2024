@@ -137,14 +137,15 @@ def extract_singular_matrix(filename, perts):
     return singular_matrix
 
 
-def extract_covariance_matrix(single = False):
+def extract_covariance_matrix(single = False, name = None):
     """
     :param single : A boolean. If set to True, the extracted covariance is a 
     single-covariance matrix. Else, it is the full covariance matrix
     :return: A DataFrame containing the covariance matrice of the perturbed 
     cross sections for reactions MT2, MT18 and MT18
     """
-    csv_file = os.path.join(main_path, "GPT", "{}_xs_reduced.csv".format(ISOTOPE))
+    filename = "{}_xs_reduced.csv".format(ISOTOPE) if name is None else name
+    csv_file = os.path.join(main_path, "CovarianceMatrices", filename)
     covariance_matrix = pd.read_csv(csv_file, header=[0,1,2], index_col=[0,1,2])
 
     # Filtrering out MT4 data
@@ -215,6 +216,36 @@ def compute_variance_gpt(single=True):
     covariance_mat = covariance_matrix.values
     variance = sens_vec.T @ covariance_mat @ sens_vec
     return variance
+
+def extract_myrrha_sensitivities():
+    gpt_reader = serpentTools.read(os.path.join(os.getcwd(), "input.i_sens0.m"))
+    zai = 942390 if ISOTOPE == 'Pu239' else 922380
+    zai_index = gpt_reader.zais[zai] 
+
+    fission_index = gpt_reader.perts["capture xs"] # Fission xs perturbation
+    el_scatter_index = gpt_reader.perts["ela scatt xs"] # Elastic scattering xs perturbation
+    rad_capt_index = gpt_reader.perts["fission xs"] # Radiative capture xs perturbation
+
+    fission_sensitivities = gpt_reader.sensitivities["keff"][0][zai_index][fission_index]
+    el_scatter_sensitivities = gpt_reader.sensitivities["keff"][0][zai_index][el_scatter_index]
+    rad_capt_sensitivities = gpt_reader.sensitivities["keff"][0][zai_index][rad_capt_index]
+
+    gpt_vector = {"MT2": np.zeros((226,)), "MT18": np.zeros((226,)), "MT102": np.zeros((226,))}
+    gpt_vector_lethargy_normalised = {"MT2": np.zeros((226,)), "MT18": np.zeros((226,)), "MT102": np.zeros((226,))}
+
+    for sensitivities, label in [(fission_sensitivities, "MT18"), 
+                                (el_scatter_sensitivities, "MT2"),
+                                (rad_capt_sensitivities, "MT102")]:
+        i = 0
+        for sensitivity, error in sensitivities:
+            gpt_vector[label][i] = sensitivity
+            gpt_vector_lethargy_normalised[label][i] = sensitivity
+            i += 1
+
+
+        gpt_vector_lethargy_normalised[label] /= gpt_reader.lethargyWidths
+ 
+    return gpt_vector, gpt_vector_lethargy_normalised
 
 ECCO33 = sorted([1.9640330000E+01,1.0000000000E+01, 6.0653070000E+00, 3.6787940000E+00,
            2.2313020000E+00, 1.3533530000E+00, 8.2085000000E-01, 4.9787070000E-01, 3.0197380000E-01,
