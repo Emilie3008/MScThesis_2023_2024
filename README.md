@@ -8,7 +8,7 @@ This code was developped using Python version 12.3.0, as well as the following l
 - numpy version 1.26.4
 - serpentTools version 0.10.1
 - pandas version 1.3.2
-- iracepy version 0.0.1
+- iracepy version 0.0.1, with R 4.4.0 installed
 
 ## Abstract
 
