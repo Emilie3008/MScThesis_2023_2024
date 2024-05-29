@@ -29,9 +29,9 @@ def read_results(n_groups, select="best", switch = False):
     # the fitness function associated to it and its associated
     # color for the graphs
     methods = [
-        ("GPT", fitness_functions.compare_vectors_GPT, "m"),
-        ("XGPT", fitness_functions.compare_vectors_GPT_xGPT,"darkgreen" ),
-        ("uncertainty", fitness_functions.compare_uncertainty_GPT_xGPT, "red")
+        ("GPT", fitness_functions.compare_vectors_gpt, "m"),
+        ("XGPT", fitness_functions.compare_vectors_gpt_xgpt,"darkgreen" ),
+        ("uncertainty", fitness_functions.compare_variance_gpt_xgpt, "red")
     ]
     
     # Iteration on each specified group
