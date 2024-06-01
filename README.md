@@ -32,7 +32,7 @@ The following section briefly describes the different folders and python scripts
 - **ColorPalette** : I chose to associate to each eigenfunction a specific color in order to make the figures of Chapter 5 consistent. This folder contains textfiles with the RGB representation of the color of each eigenfunction.
 - **CovarianceMatrices**: This folder contains the covariance matrices of $Pu^{239}$ and  $U^{238}$, processed over each energy grids of the subfolder **Grids**. Those covariance matrices were used for the comparisons of the representativities of Chapter 5.
 - **GPT** folder: This folder contains the results for GPT-scored sensitivities of $U^{238}$ and $Pu^{239}$ from the simulation of the ALFRED core with Serpent 2.
-- **XGPT** folder: This folder contains two sub-folders, one with Pu239 data and the other with U238 data. Each sub-folder contains the results of the sensitivities of the ALFRED core.
+- **XGPT** folder: This folder contains two sub-folders, one with Pu239 data and the other with U238 data. Each sub-folder contains the results of the XGPT-scored sensitivities of the ALFRED core from the simulation with Serpent 2, as well as text files containing the eigenfunctions evaluated on the 1500G and the singular values.
 - **Results** : This folder contains the results of the tests carried out in Chapter 4 and 5. It has 3 subfolders:
   - **ConvergenceCurves**: this subfolder contains the results of the tests of convergence for the different configuration of parameters.
   - **Pu239**: This folder contains the energy grids optimised on the sensitivity profiles of  $Pu^{239}$.
@@ -44,7 +44,6 @@ The following section briefly describes the different folders and python scripts
 - **irace_parametrisation.py**: This python script was used to run the iterative racing for the parametrisation of the final genetic algorithm.
 - **isotope.txt**: This text file should be filled with a single entry for the nuclide on which we wish to optimise the grids. If we want to optimise with respect to $^{239}$Pu, enter Pu239. If we want to optimise for $^{238}$U, enter U238.
 - **1500G.txt** and **226G.txt**: These text files give the exact energies of the XGPT and GPT fine discretisations. Each line corresponds to a new energy. For an N-group discretisation, N + 1 energies must be defined. Thus, **1500G.txt** contains 1501 lines and **226G.txt** contains 227 lines.
-scored by XGPT from the simulation with Serpent 2, as well as text files containing the eigenfunctions evaluated on the 1500G and the singular values
 - **plot_results.py**: This Python file contains all the functions used to plot the results of the optimisation (plot the different eigenfunctions, compare the fine vs. evaluated sensitivity profile, etc.).
 - **genetic_algorithm.py**: This Python file contains the code for the genetic algorithm. It is essentially the same code as the one used with the sample case, with minor details changing (e.g. different default parameters, fitness storage, etc.).
 - **main.py**: This Python file is used to run the simulation.
