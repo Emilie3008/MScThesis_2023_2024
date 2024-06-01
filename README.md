@@ -23,7 +23,7 @@ On the one hand, the possibility of computing the many-groups sensitivities with
 ## Sample Case
 This sample case was used in the early stages of the development of the project in order to develop the genetic algorithm. Here is a brief description of the content of this folder :
 - **Sample_Case_GA.py**: Contains the Genetic Algorithm used in the sample case. It features a multi-parent reproduction, an adaptive mutation rate and a stochastic tournament selection.
-- **ComparativeAnalysis**: Contains the convergence curves of the comparative analysis of the different configurations
+- **ComparativeAnalysis**: Contains the convergence results of the comparative analysis of the different configurations
 - **Irace Parametrisation**: Contains the scripts used to configure the parametrisation of the GA for the sample case.
 
 ## Energy grid design
