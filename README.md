@@ -1,4 +1,4 @@
-# Energy Grid Design For Fast Reactors Sensitivity Calculations 
+# Energy Grid Design For Fast Reactor Sensitivity Calculations 
 
 This code was developed as a part of my master science thesis in physics engineering at ULB, in a collaboration with the Belgian Nuclear Center SCK CEN. 
 
