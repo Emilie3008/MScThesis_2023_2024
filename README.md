@@ -39,7 +39,7 @@ The following section briefly describes the different folders and python scripts
   - **U238**: This folder contains the energy grids optimised on the sensitivity profiles of  $U^{238}$.    
 - **extract_input_data.py**: All data extraction and pre-processing operations are carried out by this script.
 - **extract_results.py**: Contains the function used to read and extract the best resulting energy grids.
-- **fitness_functions.py**: This Python file contains the 4 fitness functions that have been developed.
+- **fitness_functions.py**: This Python file contains the 3 fitness functions that have been developed.
 - **fitness_utils.py**: This Python file contains all the functions performing the various sub-steps (evaluation on a coarse grid, extension, projection, etc.) of the fitness functions.
 - **irace_parametrisation.py**: This python script was used to run the iterative racing for the parametrisation of the final genetic algorithm.
 - **isotope.txt**: This text file should be filled with a single entry for the nuclide on which we wish to optimise the grids. If we want to optimise with respect to $^{239}$Pu, enter Pu239. If we want to optimise for $^{238}$U, enter U238.
