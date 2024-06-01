@@ -12,7 +12,7 @@ This code was developped using Python version 12.3.0, as well as the following l
 
 ## Abstract
 
-In this work, we explore the possibility of using genetic algorithms (GA) as a search method for the design of energy grids used in the framework of fast reactors sensitivity calculations.
+Correctly characterising the sensitivity vectors is a crucial step in obtaining reliable information on the response of a perturbed nuclear system. Ideally, case-specific energy grids should be used, but the difficulty of the design encourages the use of general-purpose energy grids. In this work, we explore the possibility of using genetic algorithms (GA) as a search method for the design of energy grids used in the framework of fast reactors sensitivity calculations.
 
 The main idea behind the three proposed fitness functions is to measure how good a sensitivity vector evaluated on a few-group discretisations is at accurately representing the same sensitivity vector, but scored on a many-group energy discretisations.
 
@@ -35,15 +35,14 @@ The following section briefly describes the different folders and python scripts
 - **XGPT** folder: This folder contains two sub-folders, one with Pu239 data and the other with U238 data. Each sub-folder contains the results of the sensitivities of the ALFRED core.
 - **Results** : This folder contains the results of the tests carried out in Chapter 4 and 5. It has 3 subfolders:
   - **ConvergenceCurves**: this subfolder contains the results of the tests of convergence for the different configuration of parameters.
-  - **Pu239**: This folder contains the energy grids optimised on the sensitivity profiles of  $Pu^{239}$
-  - **U238**: This folder contains the energy grids optimised on the sensitivity profiles of  $Pu^{239}$
-    
+  - **Pu239**: This folder contains the energy grids optimised on the sensitivity profiles of  $^{239}$Pu.
+  - **U238**: This folder contains the energy grids optimised on the sensitivity profiles of  $^{238}$U.    
 - **extract_input_data.py**: All data extraction and pre-processing operations are carried out by this script.
 - **extract_results.py**: Contains the function used to read and extract the best resulting energy grids.
 - **fitness_functions.py**: This Python file contains the 4 fitness functions that have been developed.
 - **fitness_utils.py**: This Python file contains all the functions performing the various sub-steps (evaluation on a coarse grid, extension, projection, etc.) of the fitness functions.
 - **irace_parametrisation.py**: This python script was used to run the iterative racing for the parametrisation of the final genetic algorithm.
-- **isotope.txt**: This text file should be filled with a single entry for the nuclide on which we wish to optimise the grids. If we want to optimise with respect to $Pu^{239}$, enter Pu239. If we want to optimise for $U^{238}$, enter U238.
+- **isotope.txt**: This text file should be filled with a single entry for the nuclide on which we wish to optimise the grids. If we want to optimise with respect to $^{239}$Pu, enter Pu239. If we want to optimise for $^{238}$U, enter U238.
 - **1500G.txt** and **226G.txt**: These text files give the exact energies of the XGPT and GPT fine discretisations. Each line corresponds to a new energy. For an N-group discretisation, N + 1 energies must be defined. Thus, **1500G.txt** contains 1501 lines and **226G.txt** contains 227 lines.
 scored by XGPT from the simulation with Serpent 2, as well as text files containing the eigenfunctions evaluated on the 1500G and the singular values
 - **plot_results.py**: This Python file contains all the functions used to plot the results of the optimisation (plot the different eigenfunctions, compare the fine vs. evaluated sensitivity profile, etc.).
