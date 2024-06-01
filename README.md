@@ -18,7 +18,7 @@ The main idea behind the three proposed fitness functions is to measure how good
 
 On the one hand, the possibility of computing the many-groups sensitivities with Generalised Perturbation Theory (GPT), or with its recently updated version eXtended GPT (XGPT), is explored. On the other hand, we investigate the possibility of assessing the similarity between the many- and few-group scored sensitivity vectors through a cosine similarity or by comparing the variance on the response.
 
- The resulting energy grids are optimised for the nuclear system ALFRED, on the sensitivities of $k_{eff}$ for $^{239}$Pu and $^{238}$U, the nuclides contributing the most to the overall uncertainties. The energy grids are analysed qualitatively and quantitatively. The proposed approach results in energy grids that maximise the similarity with the fine sensitivity vectors but do not significantly impact the measure of the representativity. 
+ The resulting energy grids are optimised for the nuclear system ALFRED, on the sensitivities of $k_{eff}$ for $Pu^{239}$ and $U^{238}$, the nuclides contributing the most to the overall uncertainties. The energy grids are analysed qualitatively and quantitatively. The proposed approach results in energy grids that maximise the similarity with the fine sensitivity vectors but do not significantly impact the measure of the representativity. 
 
 ## Sample Case
 This sample case was used in the early stages of the development of the project in order to develop the genetic algorithm. Here is a brief description of the content of this folder :
@@ -35,8 +35,8 @@ The following section briefly describes the different folders and python scripts
 - **XGPT** folder: This folder contains two sub-folders, one with Pu239 data and the other with U238 data. Each sub-folder contains the results of the sensitivities of the ALFRED core.
 - **Results** : This folder contains the results of the tests carried out in Chapter 4 and 5. It has 3 subfolders:
   - **ConvergenceCurves**: this subfolder contains the results of the tests of convergence for the different configuration of parameters.
-  - **Pu239**: This folder contains the energy grids optimised on the sensitivity profiles of  $^{239}$Pu.
-  - **U238**: This folder contains the energy grids optimised on the sensitivity profiles of  $^{238}$U.    
+  - **Pu239**: This folder contains the energy grids optimised on the sensitivity profiles of  $Pu^{239}$.
+  - **U238**: This folder contains the energy grids optimised on the sensitivity profiles of  $U^{238}$.    
 - **extract_input_data.py**: All data extraction and pre-processing operations are carried out by this script.
 - **extract_results.py**: Contains the function used to read and extract the best resulting energy grids.
 - **fitness_functions.py**: This Python file contains the 4 fitness functions that have been developed.
